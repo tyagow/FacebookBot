@@ -49,6 +49,9 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/account/settings/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/account/settings/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
+#  Bot
+FACEBOOK_BOT_ACCESS_TOKEN = config('FACEBOOK_BOT_ACCESS_TOKEN')
+FACEBOOK_PAGE_ID = config('FACEBOOK_PAGE_ID')
 
 # Application definition
 

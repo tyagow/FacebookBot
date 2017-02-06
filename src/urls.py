@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from src.core import views as core_views
+from src.core.views import MyBotView
 
 urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n'))
@@ -27,5 +28,6 @@ urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('src.accounts.urls',  namespace='accounts')),
     url(r'^$', core_views.home, name='home'),
+    url(r'^66d2b8f4a09cd35cb23076a1da5d51529136a3373fd570b122/?$', MyBotView.as_view()),
     url('', include('social_django.urls', namespace='social'))
 ]
