@@ -1,11 +1,11 @@
-from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
+from unittest import skip
+
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.files.images import ImageFile
 from django.shortcuts import resolve_url
 from django.test import TestCase
 
-from src.core.models import Empresa
+from src.accounts.models import Profile
 
 
 def assertContents(self, contents):
@@ -16,17 +16,61 @@ def assertContents(self, contents):
 
 class ProfileModelTest(TestCase):
     """
-
+    Profile deve conter informações coletadas do facebook:
+      - facebook id
+      - first_name
+      - last_name
+      - picture url
+      - gender
+      - timezone
+    Profile deve ter um metodo que carrega os detalhes do facebook
     """
     def setUp(self):
-        self.profile = Profile.objects.create(nome='Vivo', slug='vivo', logo='logo.png')
+        self.user = User.objects.create_user(username='tiago', password='teste123')
+        self.profile = self.user.profile
 
     def test_create(self):
-        self.assertTrue(Empresa.objects.exists())
+        self.assertTrue(Profile.objects.exists())
 
     def test_str(self):
-        self.assertEqual(self.profile.nome, str(self.profile))
+        self.assertEqual(self.profile.user.username, str(self.profile))
 
+    def test_slug_auto_create(self):
+        self.assertEqual(self.profile.slug, 'tiago')
+
+    def test_cidade_choices_display(self):
+        """
+        gender deve ser limitado a 'M' ou 'F'
+        gender display deve mostrar Masculino para M e Feminino para F
+        """
+        self.profile.gender = 'M'
+        self.assertEqual(self.profile.get_gender_display(), 'Masculino')
+        self.profile.gender = 'F'
+        self.assertEqual(self.profile.get_gender_display(), 'Feminino')
+
+    def test_cidade_choices_validation(self):
+        """gender should be limited to F or M"""
+        self.profile.gender = 'TESTE'
+        self.assertRaises(ValidationError, self.profile.full_clean)
+
+    def test_user_details_load(self):
+        user_details = {
+            "first_name": "Tiago",
+            "last_name": "Almeida",
+            "profile_pic": "https://scontent.xx.fbcdn.net/v/t31.0-1/14681116_1304051606292232_6386653721676889855_o.jpg?oh=7ddac19a566d87bd7d864efb2c9561dd&oe=592750DE",
+            "locale": "pt_BR",
+            "timezone": -3,
+            "gender": "male"
+        }
+        self.profile.save_details('1231234512351', user_details)
+        self.assertEqual(self.profile.first_name, 'Tiago')
+        self.assertEqual(self.profile.last_name, 'Almeida')
+        self.assertEqual(self.profile.picture, 'https://scontent.xx.fbcdn.net/v/t31.0-1/14681116_1304051606292232_6386653721676889855_o.jpg?oh=7ddac19a566d87bd7d864efb2c9561dd&oe=592750DE')
+        self.assertEqual(self.profile.timezone, -3)
+        self.assertEqual(self.profile.gender, 'M')
+
+
+    @skip
     def test_get_absolute_url(self):
         url = resolve_url('accounts:detail', slug=self.profile.slug)
         self.assertEqual(url, self.profile.get_absolute_url())

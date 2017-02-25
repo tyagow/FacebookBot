@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from src.accounts.models import Profile
 from django.contrib.auth.models import User
 
+from src.accounts.models import Profile
 
 jokes = {
     'stupid': ["""Yo' Mama is so stupid, she needs a recipe to make ice cubes.""",
@@ -34,20 +35,18 @@ def read_user_details(fbid):
     return requests.get(user_details_url).json()
 
 
-
 def decode_message(recevied_message, profile):
     pass
-
 
 
 def read_message(fbid, recevied_message):
     tokens = re.sub(r"[^a-zA-Z0-9\s]", ' ', recevied_message).lower().split()
     response_text = ''
-    profile = None #Profile.objects.filter(fbid=fbid)
+    profile = Profile.objects.filter(fbid=fbid)
     if not profile:
         user_details = read_user_details(fbid)
         user = User.objects.create_user(username=fbid, password='cliente_password')
-        user.profile.save_details(user_details)
+        user.profile.save_details(fbid, user_details)
         response_text = 'Oi {}, agora que já guardei teu nome na minha memória, podemos começar.\nEm que posso te ajudar?'.format(user.profile.first_name)
 
     else:
