@@ -1,7 +1,9 @@
+from unittest import skip
+
 from django.shortcuts import resolve_url as r
 from django.test import TestCase
 
-
+@skip
 class BotViewTest(TestCase):
     def setUp(self):
         fake_message = {

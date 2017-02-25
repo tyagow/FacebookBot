@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
-from src.accounts.models import Profile
+# from src.accounts.models import Profile
 from django.contrib.auth.models import User
 
 
@@ -43,7 +43,7 @@ def decode_message(recevied_message, profile):
 def read_message(fbid, recevied_message):
     tokens = re.sub(r"[^a-zA-Z0-9\s]", ' ', recevied_message).lower().split()
     response_text = ''
-    profile = Profile.objects.filter(fbid=fbid)
+    profile = None #Profile.objects.filter(fbid=fbid)
     if not profile:
         user_details = read_user_details(fbid)
         user = User.objects.create_user(username=fbid, password='cliente_password')

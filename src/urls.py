@@ -27,5 +27,5 @@ urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('src.accounts.urls',  namespace='accounts')),
     url(r'^bot/', include('src.bot.urls',  namespace='bot')),
-    url(r'^$', include('src.core.urls',  namespace='core')),
+    url(r'^', include('src.core.urls',  namespace='core')),
 ]
