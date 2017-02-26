@@ -1,13 +1,32 @@
 from __future__ import unicode_literals
 
+import datetime
+from pprint import pprint
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+from django.db.models import CASCADE
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.text import slugify
+
+from src.accounts.managers import SessionManager
+
+
+def create_slug(instance, new_slug=None):
+    slug = slugify(instance.user.username)
+    if new_slug is not None:
+        slug = new_slug
+    qs = Profile.objects.filter(slug=slug).order_by("-id")
+    exists = qs.exists()
+    if exists:
+        new_slug = "%s-%s" % (slug, qs.first().id)
+        return create_slug(instance, new_slug=new_slug)
+    return slug
 
 
 class Profile(models.Model):
@@ -37,18 +56,60 @@ class Profile(models.Model):
         self.timezone = user_details.get('timezone')
         self.save()
 
+    def update_or_create_session(self):
+        """
+        Must update last valid session or create a new one
+        :return:  :bool: created, :Session: session
+        """
+        # get last active session
+        created = None
+        session = self.sessions.active()
 
-def create_slug(instance, new_slug=None):
-    slug = slugify(instance.user.username)
-    if new_slug is not None:
-        slug = new_slug
-    qs = Profile.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" % (slug, qs.first().id)
-        return create_slug(instance, new_slug=new_slug)
-    return slug
+        # Create session
+        if not session:
+            created = True
+            session = self.sessions.create()
+        else:
+            # verify if session is valid ( expired ...)
+            if session.is_valid():
+                # Force update model to updated last_active
+                session.save()
+            else:
+                # create new session
+                created = True
+                session = self.sessions.create()
+        return created, session
 
+    @property
+    def session(self):
+        return self.sessions.active()
+
+SESSION_MINUTES_DURATION = 10
+
+
+class Session(models.Model):
+
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='sessions')
+    last_active = models.DateTimeField(auto_now=True, auto_now_add=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    objects = SessionManager()
+
+    def is_expired(self):
+
+        expired_date = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
+        last_active = self.last_active.replace(tzinfo=None)
+
+        return last_active <= expired_date
+
+    def is_valid(self):
+        if self.is_expired():
+            self.active = False
+
+    @property
+    def last_updated(self):
+        return self.last_active.astimezone().ctime()
 
 
 @receiver(post_save, sender=User)

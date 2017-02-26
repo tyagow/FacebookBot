@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import resolve_url
 from django.test import TestCase
 
-from src.accounts.models import Profile
+from src.accounts.models import Profile, Session
 
 
 def assertContents(self, contents):
@@ -69,6 +69,15 @@ class ProfileModelTest(TestCase):
         self.assertEqual(self.profile.timezone, -3)
         self.assertEqual(self.profile.gender, 'M')
 
+    # @skip
+    def test_has_sessions(self):
+        created, session = self.profile.update_or_create_session()
+        self.assertEqual(self.profile.sessions.count(), 1)
+        self.assertTrue(created)
+
+    def test_session_property_has_last_active_session(self):
+        created, session = self.profile.update_or_create_session()
+        self.assertIsInstance(self.profile.session, Session)
 
     @skip
     def test_get_absolute_url(self):
