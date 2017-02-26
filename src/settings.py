@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     # Project apps
     'src.core',
     'src.accounts',
+    'src.bot',
 
     # app de terceiros
     'crispy_forms',

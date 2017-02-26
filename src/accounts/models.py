@@ -62,7 +62,7 @@ class Profile(models.Model):
         :return:  :bool: created, :Session: session
         """
         # get last active session
-        created = None
+        created = False
         session = self.sessions.active()
 
         # Create session
@@ -100,12 +100,14 @@ class Session(models.Model):
 
         expired_date = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
         last_active = self.last_active.replace(tzinfo=None)
-
+        print('is expired ? {}'.format(last_active <= expired_date))
         return last_active <= expired_date
 
     def is_valid(self):
         if self.is_expired():
             self.active = False
+            return False
+        return True
 
     @property
     def last_updated(self):

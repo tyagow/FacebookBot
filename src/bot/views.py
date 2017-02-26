@@ -48,8 +48,7 @@ class MyBotView(generic.View):
                     id = message['sender']['id']
                     msg = message['message']['text']
                     if not id == settings.FACEBOOK_PAGE_ID:
-                        to_user = read_message(id, msg)
-                        post_facebook_message(id, to_user)
+                        read_message(id, msg)
                     else:
                         print('Mensagem vinda de {id} e com o conteudo:{msg} não processada'.format(msg=msg, id=id))
 

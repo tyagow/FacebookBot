@@ -48,14 +48,9 @@ class SessionModelTest(TestCase):
         self.assertEqual(self.session.last_updated, self.session.last_active.astimezone().ctime())
     # def test_session(self):
 
-
     @skip
     def test_str(self):
         self.assertEqual(self.session.user.username, str(self.session))
-
-    @skip
-    def test_slug_auto_create(self):
-        self.assertEqual(self.session.slug, 'tiago')
 
     @skip
     def test_get_absolute_url(self):
