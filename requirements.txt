@@ -12,3 +12,4 @@ django-storages
 django-test-without-migrations==0.4
 django-fsm==2.4.0
 pytz==2016.10
+requests

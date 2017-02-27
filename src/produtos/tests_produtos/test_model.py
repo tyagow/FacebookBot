@@ -1,11 +1,9 @@
 from unittest import skip
 
-import mock as mock
 from django.contrib.auth.models import User
 from django.shortcuts import resolve_url
 from django.test import TestCase
 
-from src.bot.models import Session
 from src.produtos.models import Produto, ProductOrder
 
 

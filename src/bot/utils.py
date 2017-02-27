@@ -1,6 +1,5 @@
 import json
 import re
-from pprint import pprint
 
 import requests
 from django.conf import settings

@@ -8,15 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from src.bot.utils import read_message, post_facebook_message
 
-jokes = {
-    'stupid': ["""Yo' Mama is so stupid, she needs a recipe to make ice cubes.""",
-               """Yo' Mama is so stupid, she thinks DNA is the National Dyslexics Association."""],
-    'fat':    ["""Yo' Mama is so fat, when she goes to a restaurant, instead of a menu, she gets an estimate.""",
-               """ Yo' Mama is so fat, when the cops see her on a street corner, they yell, "Hey you guys, break it up!" """],
-    'dumb':   ["""Yo' Mama is so dumb, when God was giving out brains, she thought they were milkshakes and asked for extra thick.""",
-               """Yo' Mama is so dumb, she locked her keys inside her motorcycle."""]
-}
-
 
 class MyBotView(generic.View):
 
@@ -46,6 +37,8 @@ class MyBotView(generic.View):
                     # Print the message to the terminal
                     # print('Message: ', message)
                     id = message['sender']['id']
+                    print(id)
+
                     msg = message['message']['text']
                     if not id == settings.FACEBOOK_PAGE_ID:
                         read_message(id, msg)
