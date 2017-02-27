@@ -35,7 +35,7 @@ class MyBotView(generic.View):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         # Facebook recommends going through every entry since they might send
         # multiple messages in a single call during high load
-        print('Incoming message {}'.format(incoming_message))
+        # print('Incoming message {}'.format(incoming_message))
         for entry in incoming_message['entry']:
             # print('Entry message {}'.format(entry))
             for message in entry['messaging']:
@@ -49,7 +49,7 @@ class MyBotView(generic.View):
                     msg = message['message']['text']
                     if not id == settings.FACEBOOK_PAGE_ID:
                         read_message(id, msg)
-                    else:
-                        print('Mensagem vinda de {id} e com o conteudo:{msg} não processada'.format(msg=msg, id=id))
+                    # else:
+                    #     print('Mensagem vinda de {id} e com o conteudo:{msg} não processada'.format(msg=msg, id=id))
 
         return HttpResponse('teste')

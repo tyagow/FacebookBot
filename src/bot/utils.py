@@ -25,31 +25,35 @@ def get_or_create_profile(fbid):
         created = True
         user_details = read_user_details(fbid)
         user = User.objects.create_user(username=fbid, password='cliente_password')
-        user.profile.save_details(fbid, user_details)
-        user.profile.update_or_create_session()
-        post_facebook_message(fbid, 'Olá {nome}, vejo que está é a primeira vez que nos falamos, que legal!')
+        profile = user.profile
+        profile.save_details(fbid, user_details)
+        profile.update_or_create_session()
+
+        post_facebook_message(
+            fbid,
+            'Olá {}, vejo que está é a primeira vez que nos falamos, que legal!'.format(profile.first_name)
+        )
 
     return created, profile
 
 
-def decode_message(recevied_message, profile):
+def get_tokens(recevied_message):
     tokens = re.sub(r"[^a-zA-Z0-9\s]", ' ', recevied_message).lower().split()
-    print(tokens)
+    return tokens
 
 
 def read_message(fbid, recevied_message):
     tokens = re.sub(r"[^a-zA-Z0-9\s]", ' ', recevied_message).lower().split()
     response_text = ''
     created, profile = get_or_create_profile(fbid)
-    if not created:
-        session_created, session = profile.update_or_create_session()
-        if session_created:
-            print('Sessao Criada')
-            print(recevied_message)
-        else:
-            print('Sessão ativa')
-            print(recevied_message)
-        # profile.session.decode_msg(recevied_message)
+    session_created, session = profile.update_or_create_session()
+    # if session_created:
+    #     print('Sessao Criada')
+    #     # print(recevied_message)
+    # else:
+    #     print('Sessão ativa')
+    #     # print(recevied_message)
+    session.decode_msg(recevied_message)
 
 
 def post_facebook_message(fbid, recevied_message):
@@ -61,5 +65,5 @@ def post_facebook_message(fbid, recevied_message):
         "message": {"text": recevied_message}
     })
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
-    pprint(status.json())
+    # pprint(status.json())
 

@@ -66,9 +66,10 @@ INSTALLED_APPS = [
     'src.core',
     'src.accounts',
     'src.bot',
+    'src.produtos',
+    'src.pedidos',
 
     # app de terceiros
-    'crispy_forms',
     'django_extensions',
     'bootstrap3',
     'test_without_migrations',

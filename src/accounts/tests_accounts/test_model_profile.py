@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import resolve_url
 from django.test import TestCase
 
-from src.accounts.models import Profile, Session
+from src.accounts.models import Profile
+from src.bot.models import Session
 
 
 def assertContents(self, contents):
