@@ -69,7 +69,6 @@ class Pedido(models.Model):
 
     def send_produtos(self):
         lista_produtos = Produto.objects.ativos()
-        # lista_produtos = map(lambda x: x.nome, lista_produtos)
         lista = 'Lista de produtos:\n'
         for produto in lista_produtos:
             if produto in self.produtos.list_produtos(self):

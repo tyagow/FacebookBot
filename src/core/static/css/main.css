@@ -3,7 +3,11 @@
     Modelo de cor:
             -- componente - bg|text: cor
      */
-    --nav-bg: #3a9ade;
+    --base-color:#3a9ade;
+    --base-dark-color: #276f9e;
+
+
+    --nav-bg: var(--base-color);
     --footer-bg: #3a9ade;
     --body-bg: #ededed;
     --card-basic-bg: #fff;

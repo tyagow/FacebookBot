@@ -35,6 +35,13 @@
     font-weight: 900;
     margin-right: 10px;
 }
+.open>a {
+    background-color:  var(--base-dark-color) !important;
+    border: 0;
+}
+.links:hover {
+    background-color:  var(--base-dark-color) !important;
+}
 .menu-user {
     background-color: var(--nav-bg) !important;
 }
