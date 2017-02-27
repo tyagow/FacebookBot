@@ -49,6 +49,8 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/account/settings/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/account/settings/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
+FACEBOOK_BOT_ACCESS_TOKEN = config('FACEBOOK_BOT_ACCESS_TOKEN')
+FACEBOOK_PAGE_ID = config('FACEBOOK_PAGE_ID')
 
 # Application definition
 
@@ -63,11 +65,14 @@ INSTALLED_APPS = [
     # Project apps
     'src.core',
     'src.accounts',
+    'src.bot',
+    'src.produtos',
+    'src.pedidos',
 
     # app de terceiros
-    'crispy_forms',
     'django_extensions',
     'bootstrap3',
+    'test_without_migrations',
     'storages',
 ]
 
@@ -141,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
