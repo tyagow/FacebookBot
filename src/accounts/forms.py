@@ -3,6 +3,7 @@ from django.contrib.auth import (
     authenticate,
     get_user_model,
 )
+from django.utils.translation import ugettext_lazy as _
 
 User = get_user_model()
 
@@ -21,13 +22,13 @@ class UserLoginForm(forms.Form):
         if username and password:
             user = authenticate(username=username, password=password)
             if not user:
-                raise forms.ValidationError("this user does not exist!")
+                raise forms.ValidationError(_("Este usuário não existe!"))
 
             if not user.check_password(password):
-                raise forms.ValidationError("Incorrect password")
+                raise forms.ValidationError(_('Senha incorreta!'))
 
             if not user.is_active:
-                raise forms.ValidationError("This user is no longer active.")
+                raise forms.ValidationError(_("Este usuário não esta ativo."))
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
 
@@ -63,11 +64,11 @@ class UserRegisterForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         email2 = self.cleaned_data.get('email2')
         if not email == email2:
-            raise forms.ValidationError("Emails precisam ser iguais")
+            raise forms.ValidationError(_("Emails precisam ser iguais."))
         email_qs = User.objects.filter(email=email)
 
         if email_qs.exists():
-            raise forms.ValidationError("This Email has already been registered!")
+            raise forms.ValidationError(_('Este email já esta cadastrado.'))
 
         return email
 
@@ -75,7 +76,7 @@ class UserRegisterForm(forms.ModelForm):
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
         if not password == password2:
-            raise forms.ValidationError("Senha devem ser iguais")
+            raise forms.ValidationError(_("Senha devem ser iguais"))
         #
         # if email_qs.exists():
         #     raise forms.ValidationError("This Email has already been registered!")

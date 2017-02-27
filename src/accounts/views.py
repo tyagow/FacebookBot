@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.utils.translation import ugettext as _
 
 from src.accounts.forms import UserRegisterForm
 
@@ -21,22 +22,22 @@ def logout_view(request):
 def settings(request):
     user = request.user
 
-    try:
-        twitter_login = user.social_auth.get(provider='twitter')
-    except Exception:
-        twitter_login = None
-
-    try:
-        facebook_login = user.social_auth.get(provider='facebook')
-    except Exception:
-        facebook_login = None
-
-    can_disconnect = (user.social_auth.count() > 1 or user.has_usable_password())
+    # try:
+    #     twitter_login = user.social_auth.get(provider='twitter')
+    # except Exception:
+    #     twitter_login = None
+    #
+    # try:
+    #     facebook_login = user.social_auth.get(provider='facebook')
+    # except Exception:
+    #     facebook_login = None
+    #
+    # can_disconnect = (user.social_auth.count() > 1 or user.has_usable_password())
 
     return render(request, 'accounts/settings.html', {
-        'twitter_login': twitter_login,
-        'facebook_login': facebook_login,
-        'can_disconnect': can_disconnect
+        # 'twitter_login': twitter_login,
+        # 'facebook_login': facebook_login,
+        # 'can_disconnect': can_disconnect
     })
 
 @login_required
@@ -51,10 +52,10 @@ def password(request):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, 'Sua senha foi atualizada!')
+            messages.success(request, _('Sua senha foi atualizada!'))
             return redirect('accounts:settings')
         else:
-            messages.error(request, 'Corriga os erros no formulário!')
+            messages.error(request, _('Corriga os erros no formulário!'))
     else:
         form = PasswordForm(request.user)
     return render(request, 'accounts/password.html', {'form': form})
@@ -78,5 +79,6 @@ def register_view(request):
     context = {
         "form": form,
         "title": title,
+        'button_text': title
     }
-    return render(request, "form.html", context)
+    return render(request, "widgets/form.html", context)

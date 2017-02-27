@@ -31,11 +31,11 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
 
 
 # Social Login
-SOCIAL_AUTH_TWITTER_KEY = config('SOCIAL_AUTH_TWITTER_KEY')
-SOCIAL_AUTH_TWITTER_SECRET = config('SOCIAL_AUTH_TWITTER_SECRET')
+SOCIAL_AUTH_TWITTER_KEY = config('SOCIAL_AUTH_TWITTER_KEY', default='twitter_key')
+SOCIAL_AUTH_TWITTER_SECRET = config('SOCIAL_AUTH_TWITTER_SECRET', default='twitter_secret')
 
-SOCIAL_AUTH_FACEBOOK_KEY = config('SOCIAL_AUTH_FACEBOOK_KEY')
-SOCIAL_AUTH_FACEBOOK_SECRET = config('SOCIAL_AUTH_FACEBOOK_SECRET')
+SOCIAL_AUTH_FACEBOOK_KEY = config('SOCIAL_AUTH_FACEBOOK_KEY', default='facebook_key')
+SOCIAL_AUTH_FACEBOOK_SECRET = config('SOCIAL_AUTH_FACEBOOK_SECRET', default='facebook_key')
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
     'fields': 'id,name,email',
@@ -43,13 +43,13 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 LOGIN_URL = 'account/login'
 LOGOUT_URL = 'account/logout'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'core:home'
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/account/settings/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/account/settings/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
-#  Bot
+
 FACEBOOK_BOT_ACCESS_TOKEN = config('FACEBOOK_BOT_ACCESS_TOKEN')
 FACEBOOK_PAGE_ID = config('FACEBOOK_PAGE_ID')
 
@@ -66,12 +66,15 @@ INSTALLED_APPS = [
     # Project apps
     'src.core',
     'src.accounts',
+    'src.bot',
+    'src.produtos',
+    'src.pedidos',
 
     # app de terceiros
-    'crispy_forms',
     'django_extensions',
     'bootstrap3',
-    'social_django',
+    'test_without_migrations',
+    'storages',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -83,13 +86,11 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'src.middlewares.force_default_language.ForceDefaultLanguageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 
 ]
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.twitter.TwitterOAuth',
-    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -106,8 +107,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -146,9 +145,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'pt-BR'
+LANGUAGE_CODE = 'pt'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -160,7 +159,34 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# AWS
+
+# AWS_HEADERS = {  # see http://developer.yahoo.com/performance/rules.html#expires
+#     'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
+#     'Cache-Control': 'max-age=94608000',
+# }
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+
+AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+
+AWS_DEFAULT_ACL = ''
+
+# This is used by the `static` template tag from `static`, if you're using that. Or if anything else
+# refers directly to STATIC_URL. So it's safest to always set it.
+
+if DEBUG:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    STATICFILES_LOCATION = 'static'
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+    MEDIAFILES_LOCATION = 'media'
+    MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+

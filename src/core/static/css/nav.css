@@ -1,0 +1,47 @@
+.space-nav-fixed {
+    margin-top: 50px;
+}
+/*logo central*/
+.logo-warper {
+    background-color: transparent;
+    border-radius: 0% 0% 300% 300%;
+    margin: auto;
+    width: 245px;
+    height: 70px;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    left: 0;
+    right: 0;
+
+}
+.logo-warper img {
+    height: 86px;
+}
+.navbar-fixed-top {
+    background-color: var(--nav-bg) !important;
+}
+.navbar-default {
+    /*background-color: transparent;*/
+    height: 50px;
+}
+.navbar-collapse.in {
+    background-color: #fff;
+    padding-top: 35px;
+}
+.links {
+    /*color: var(--branco) !important;*/
+    color: #fff !important;
+    font-weight: 900;
+    margin-right: 10px;
+}
+.open>a {
+    background-color:  var(--base-dark-color) !important;
+    border: 0;
+}
+.links:hover {
+    background-color:  var(--base-dark-color) !important;
+}
+.menu-user {
+    background-color: var(--nav-bg) !important;
+}

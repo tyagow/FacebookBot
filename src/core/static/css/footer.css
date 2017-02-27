@@ -1,0 +1,10 @@
+/*
+  *************  FOOTER  ************
+*/
+#footer {
+    height: 80px;
+    background-color: var(--footer-bg);
+    padding-top: 10px;
+    color: #fff;
+    text-align: center;
+}
