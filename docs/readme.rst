@@ -3,8 +3,8 @@ Django Base
 =============================
 
 
-.. image:: https://travis-ci.org/tyagow/django-base.svg?branch=master
-    :target: https://travis-ci.org/tyagow/django-base
+.. image:: https://travis-ci.org/tyagow/FacebookBot.svg?branch=master
+    :target: https://travis-ci.org/tyagow/FacebookBot
 
 Documentation
 -------------

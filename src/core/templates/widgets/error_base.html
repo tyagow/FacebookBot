@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <!-- OVERVIEW -->
+    <section class="section-single">
+        <div class="container">
+            <div class="col-md-8 offset-2">
+                <div class="card  text-center">
+                    <div class="card-header card-inverse bg-primary">
+                        <h1 class="card-title">{{ title }}</h1>
+                    </div>
+                    <div class="card-block">
+                        <h2>{{ subtitle }}</h2>
+                        <p>{{ error_message }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

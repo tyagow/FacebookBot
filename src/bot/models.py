@@ -91,13 +91,23 @@ class Session(models.Model):
 
     def send_menu(self):
         post_facebook_message(self.fbid,
-                              "Digite o numero da opção que voce deseja: \n1 - Fazer pedido \n2 - Cadastrar Telefone e Edenreço\n3 - Meus Pedidos")
+                              "Digite o numero da opção que voce deseja: \n1 - Fazer pedido \n2 - Meus Pedidos")
         self.set_state(ClientStateEnum.RECEBER_OPCAO_MENU)
 
     def send_cadastro_endereco(self):
         post_facebook_message(self.fbid,
                               'Por favor digite o endereço para realizarmos a entrega.')
         self.set_state(ClientStateEnum.CADASTRO_ENDERECO_RECEBER)
+
+    def send_pedidos_ativos(self):
+        post_facebook_message(self.fbid,
+                              'Enviando pedidos que ainda não foram entregues.')
+        for pedido in Pedido.objects.actives(self.profile.user):
+            post_facebook_message(self.fbid,
+                                  pedido.to_confirmation)
+
+        self.set_state(ClientStateEnum.ENVIAR_MENU)
+        self.send_menu()
 
     def send_cadastro_telefone(self):
         post_facebook_message(self.fbid,
@@ -113,7 +123,6 @@ class Session(models.Model):
         post_facebook_message(self.fbid, 'endereço atualizado!\nSeu novo endereço cadastrado é {}'.format(self.profile.endereco))
         self.send_cadastro_telefone()
 
-    @transition(field=state, source='*', target=ClientStateEnum.ENVIAR_MENU)
     def update_telefone(self, message):
         print('Updated telefone %s' % message)
         self.profile.telefone = message
@@ -122,7 +131,9 @@ class Session(models.Model):
         self.save()
         post_facebook_message(self.fbid,
                               'telefone atualizado!\nSeu novo telefone cadastrado é {}'.format(self.profile.telefone))
-        self.send_menu()
+
+        self.set_state(ClientStateEnum.PEDIDO)
+        self.update_or_create_pedido('menu')
 
     def read_menu(self, message):
         tokens = get_tokens(message)
@@ -136,7 +147,8 @@ class Session(models.Model):
                 self.save()
                 self.send_cadastro_endereco()
         elif '2' in tokens:
-            self.send_cadastro_endereco()
+            self.send_pedidos_ativos()
+
         else:
             post_facebook_message(
                 self.fbid,

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="single-section">
+        <div class="container">
+            <table class="table card-basic">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>Ultima atualização</th>
+                    <th>Produtos</th>
+                    <th>status</th>
+                    <th>total</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ object.session.profile.first_name }}</td>
+                        <td>{{ object.last_updated }}</td>
+                        <td>
+                            {%  for produto in object.produtos.all %}
+                                <div class="row">
+                                    {{ produto.amount }} - {{ produto.nome }}
+                                </div>
+                            {% endfor %}
+                        </td>
+                        <td>{{ object.get_status_display }}</td>
+                        <td>{{ object.valor_total }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </section>
+{% endblock %}
