@@ -15,12 +15,12 @@
 
                 </tr>
                 </thead>
-                <tbody class="">
+                <tbody class="pedido-list-tbody">
                 {% for object in object_list %}
                     <tr href="{{ object.get_absolute_url }}">
                         <td>{{ object.session.profile.first_name }}</td>
                         <td>{{ object.horario_hora }}</td>
-                        <td>{{ object.get_entrega_display }}</td>
+                        <td>{{ object.get_entrega_display }}{% if object.entrega == 1 %}<br>{{ object.endereco }}{% endif %}</td>
 
                         <td>
                             {%  for produto in object.produtos.all %}
@@ -30,7 +30,7 @@
                         </td>
                         <td>
                             <form method="GET" action="{% url 'pedido:update' object.id %}">
-                                <select>
+                                <select class="selectpicker">
                                     <option name="choices" value="2">Aguardando Entrega</option>
                                     <option name="choices" value="3">Enviado</option>
                                 </select>
@@ -39,7 +39,7 @@
                         </td>
                         <td>{{ object.valor_total }}</td>
                         <td>
-                            <a href="{{ object.get_absolute_url }}">Editar</a>
+                            <a class="btn btn-primary" href="{{ object.get_absolute_url }}">Ver</a>
                         </td>
                     </tr>
                 {% endfor %}

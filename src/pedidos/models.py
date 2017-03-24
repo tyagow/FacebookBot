@@ -295,7 +295,7 @@ class Pedido(models.Model):
 
     @property
     def last_updated_tz(self):
-        return self.last_updated.astimezone().ctime().replace('Sat', 'Sab')
+        return self.last_updated.astimezone().strftime('%d/%m/%Y %H:%M')
 
     @property
     def valor_total(self):
@@ -303,7 +303,10 @@ class Pedido(models.Model):
 
     @property
     def horario_verbose(self):
-        return self.horario.astimezone().strftime('%d/%m/%Y %H:%M')
+        if self.horario:
+            return self.horario.astimezone().strftime('%d/%m/%Y %H:%M')
+        else:
+            return '----'
 
     @property
     def horario_hora(self):

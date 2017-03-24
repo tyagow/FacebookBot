@@ -14,4 +14,5 @@ class PedidoModelManager(models.Manager):
         return super(PedidoModelManager, self).filter(status=2).order_by('horario')
 
     def hoje(self):
-        return super(PedidoModelManager, self).filter(horario__date=datetime.datetime.today()).order_by('horario')
+        return super(PedidoModelManager, self).filter(horario__date=datetime.datetime.today()).filter(status__gte=1).order_by('horario')
+

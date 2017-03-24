@@ -50,7 +50,7 @@ class PedidoModelManagerTest(TestCase):
     def test_hoje(self):
         """Pedidos.objects.hoje deve retornar pedidos que sejam para hoje"""
         hoje = datetime.datetime.strptime('23/3/2017 00:01', '%d/%m/%Y %H:%M')
-        self.pedido.set_horario('23/3/2017 10:30')
+        self.pedido.horario = datetime.datetime.today()
         self.pedidoB.set_horario('22/3/2017 10:30')
         self.pedido.save()
         self.pedidoB.save()

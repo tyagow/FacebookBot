@@ -19,9 +19,13 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
 
+    <!-- Latest compiled and minified JavaScript -->
     <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 
     <script src="{% static 'js/main.js' %}"></script>
 </head>
@@ -33,7 +37,7 @@
 {% bootstrap_messages %}
 {% block content %}{% endblock %}
 {% block footer %}
-        {% include 'widgets/footer.html' %}
+    {% include 'widgets/footer.html' %}
 {% endblock %}
 {% block script %}{% endblock %}
 
