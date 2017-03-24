@@ -322,3 +322,7 @@ class Pedido(models.Model):
         horario = datetime.datetime.strptime(_data, '%d/%m/%Y %H:%M')
         self.horario = pytz.timezone('America/Sao_Paulo').localize(horario)
         self.save()
+
+    @property
+    def client_name(self):
+        return self.session.profile.first_name

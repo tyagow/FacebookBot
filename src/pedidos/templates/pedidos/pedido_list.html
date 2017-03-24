@@ -2,7 +2,7 @@
 {% block content %}
     <section class="single-section">
         <div class="container">
-            <table class="table table-responsive table-hover card-basic">
+            <table class="table  table-hover card-basic">
                 <thead>
                 <tr>
                     <th>Cliente</th>
@@ -19,7 +19,7 @@
                 <tbody class="pedido-list-tbody">
                 {% for object in object_list %}
                     <tr href="{{ object.get_absolute_url }}">
-                        <td>{{ object.session.profile.first_name }}</td>
+                        <td>{{ object.client_name }}</td>
                         <td>{{ object.horario_hora }}</td>
                         <td>{{ object.endereco }}</td>
                         <td>{{ object.get_entrega_display }}</td>
@@ -31,10 +31,11 @@
                             {% endfor %}
                         </td>
                         <td>
-                            <form method="GET" action="{% url 'pedido:update' object.id %}">
-                                <select class="selectpicker">
-                                    <option name="choices" value="2">Aguardando Entrega</option>
-                                    <option name="choices" value="3">Enviado</option>
+                            <form id='update' method="put" action="{% url 'pedidos-api:update' object.id %}">
+                                {% csrf_token %}
+                                <select onchange="this.form.submit()" class="selectpicker">
+                                    <option name="status" value="2">Aguardando Entrega</option>
+                                    <option name="status" value="3">Enviado</option>
                                 </select>
                             </form>
                             {#                            {{ object.get_status_display }}#}

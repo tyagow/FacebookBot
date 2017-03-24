@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     # Project apps
     'src.core',
     'src.accounts',
@@ -75,6 +76,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'test_without_migrations',
     'storages',
+    'rest_framework',
 ]
 
 MIDDLEWARE_CLASSES = [

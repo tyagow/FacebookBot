@@ -11,7 +11,7 @@ class PedidoModelQuerySet(models.QuerySet):
         return self.filter(session__profile__user=user).filter(status=2)
 
     def realizados(self):
-        return self.filter(status=2)
+        return self.filter(status__gte=2)
 
     def hoje(self):
         return self.filter(horario__date=datetime.datetime.today())

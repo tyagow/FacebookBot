@@ -25,6 +25,7 @@ urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include('src.accounts.urls',  namespace='accounts')),
     url(r'^bot/', include('src.bot.urls',  namespace='bot')),
-    url(r'^pedido/', include('src.pedidos.urls',  namespace='pedido')),
+    url(r'^pedidos/', include('src.pedidos.urls',  namespace='pedido')),
+    url(r'^api/pedidos/', include("src.api.pedidos.urls", namespace='pedidos-api')),
     url(r'^', include('src.core.urls',  namespace='core')),
 ]
