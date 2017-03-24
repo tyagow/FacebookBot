@@ -7,6 +7,7 @@
                 <tr>
                     <th>Cliente</th>
                     <th>Horario</th>
+                    <th>Endereço</th>
                     <th>Entrega</th>
                     <th>Produtos</th>
                     <th>status</th>
@@ -20,7 +21,8 @@
                     <tr href="{{ object.get_absolute_url }}">
                         <td>{{ object.session.profile.first_name }}</td>
                         <td>{{ object.horario_hora }}</td>
-                        <td>{{ object.get_entrega_display }}{% if object.entrega == 1 %}<br>{{ object.endereco }}{% endif %}</td>
+                        <td>{{ object.endereco }}</td>
+                        <td>{{ object.get_entrega_display }}</td>
 
                         <td>
                             {%  for produto in object.produtos.all %}

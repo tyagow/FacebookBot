@@ -13,8 +13,7 @@ class PedidoListView(ListView):
     model = Pedido
 
     def get_queryset(self):
-        return Pedido.objects.hoje()
-        # return Pedido.objects.by_user(self.request.user)
+        return Pedido.objects.realizados().hoje().order_by('-horario')
 
 
 class PedidoDetailView(DetailView):
