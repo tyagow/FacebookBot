@@ -47,6 +47,14 @@ class PedidoModelManagerTest(TestCase):
         self.pedido.save()
         self.assertEqual(self.pedido, Pedido.objects.realizados()[0])
 
+    def test_hoje(self):
+        """Pedidos.objects.hoje deve retornar pedidos que sejam para hoje"""
+        hoje = datetime.datetime.strptime('23/3/2017 00:01', '%d/%m/%Y %H:%M')
+        self.pedido.set_horario('23/3/2017 10:30')
+        self.pedidoB.set_horario('22/3/2017 10:30')
+        self.pedido.save()
+        self.pedidoB.save()
+        self.assertEqual(self.pedido, Pedido.objects.hoje()[0])
 
 
 class PedidoModelTest(TestCase):
@@ -125,13 +133,14 @@ class PedidoModelTest(TestCase):
     def test_time_validation(self):
         self.assertTrue(isTimeFormat('10:20'))
         self.assertTrue(isDateTimeFormat('12/3/17 10:20'))
+        self.assertTrue(isDateTimeFormat('12/3/2017 10:20'))
 
     def test_horario_field(self):
         field = self.pedido._meta.get_field('horario')
         self.assertTrue(field.blank)
 
     def test_horario_hora(self):
-        self.pedido.horario = datetime.datetime.strptime('10/3/2017 10:30', '%d/%m/%Y %H:%M')
+        self.pedido.set_horario('10/3/2017 10:30')
         self.assertEqual(self.pedido.horario_hora, '10:30')
 
     def test_get_absolute_url(self):

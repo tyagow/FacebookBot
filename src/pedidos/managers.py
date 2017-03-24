@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -10,3 +12,6 @@ class PedidoModelManager(models.Manager):
 
     def realizados(self):
         return super(PedidoModelManager, self).filter(status=2).order_by('horario')
+
+    def hoje(self):
+        return super(PedidoModelManager, self).filter(horario__date=datetime.datetime.today()).order_by('horario')

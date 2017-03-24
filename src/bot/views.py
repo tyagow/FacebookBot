@@ -37,7 +37,7 @@ class MyBotView(generic.View):
                     # Print the message to the terminal
                     # print('Message: ', message)
                     id = message['sender']['id']
-                    print(id)
+                    # print(id)
 
                     msg = message['message']['text']
                     if not id == settings.FACEBOOK_PAGE_ID:

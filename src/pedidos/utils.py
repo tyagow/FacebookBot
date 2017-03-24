@@ -25,7 +25,11 @@ def isTimeFormat(input):
 
 def isDateTimeFormat(input):
     try:
-        time.strptime(input, '%d/%m/%y %H:%M')
+        time.strptime(input, '%d/%m/%Y %H:%M')
         return True
     except ValueError:
-        return False
+        try:
+            time.strptime(input, '%d/%m/%y %H:%M')
+            return True
+        except ValueError:
+            return False

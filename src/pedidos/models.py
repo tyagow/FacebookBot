@@ -1,5 +1,6 @@
 import datetime
 
+import pytz
 from django.db import models
 from django.shortcuts import resolve_url
 from django.utils.translation import ugettext_lazy as _
@@ -89,7 +90,9 @@ class Pedido(models.Model):
     def decode_message(self, message):
         # print('Pedido decode message %s' % message)
         # print('Pedido state %s' % self.state)
-        if self.state == PedidoState.ABERTO:
+        if self.status == PEDIDO_ABANDONADO:
+            self.send_recuperar_pedido(message)
+        elif self.state == PedidoState.ABERTO:
             self.send_produtos()
         elif self.state == PedidoState.LISTA_PRODUTOS:
             self.send_produtos()
@@ -220,9 +223,7 @@ class Pedido(models.Model):
 
     def read_horario(self, message):
         if isTimeFormat(message) or isDateTimeFormat(message):
-            d = datetime.datetime.now()
-            data = message if isDateTimeFormat(message) else '{}/{}/{} {}'.format(d.day, d.month, d.year, message)
-            self.horario = datetime.datetime.strptime(data, '%d/%m/%Y %H:%M')
+            self.set_horario(message)
             self.set_state(PedidoState.OBSERVACAO)
             self.session.send_message(
                 'Hora do pedido:\n {}\n--------------\nVoce gostaria de adicionar alguma observação no pedido ?\nDigite não ou diga sua obervação.'.format(self.horario_verbose)
@@ -280,12 +281,17 @@ class Pedido(models.Model):
             self.session.set_state(ClientStateEnum.RECEBER_OPCAO_MENU)
             self.session.send_menu()
         else:
+            self.session.send_message('Pedido Cancelado.\n')
             self.back_menu()
 
     def back_menu(self):
         self.status = PEDIDO_ABANDONADO
+        self.active = False
+        self.save()
         self.session.set_state(ClientStateEnum.RECEBER_OPCAO_MENU)
         self.session.send_menu()
+
+
 
     @property
     def last_updated_tz(self):
@@ -297,13 +303,19 @@ class Pedido(models.Model):
 
     @property
     def horario_verbose(self):
-        return self.horario.strftime('%d/%m/%Y %H:%M')
+        return self.horario.astimezone().strftime('%d/%m/%Y %H:%M')
 
     @property
     def horario_hora(self):
-        return self.horario.strftime('%H:%M')
+        return self.horario.astimezone().strftime('%H:%M')
 
     @property
     def telefone(self):
         return self.session.profile.telefone
 
+    def set_horario(self, data):
+        d = datetime.datetime.now()
+        _data = data if isDateTimeFormat(data) else '{}/{}/{} {}'.format(d.day, d.month, d.year, data)
+        horario = datetime.datetime.strptime(_data, '%d/%m/%Y %H:%M')
+        self.horario = pytz.timezone('America/Sao_Paulo').localize(horario)
+        self.save()

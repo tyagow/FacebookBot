@@ -88,6 +88,7 @@ class Session(models.Model):
 
         if message:
             pedido.decode_message(message)
+            print(pedido.get_state_display())
 
     def send_menu(self):
         post_facebook_message(self.fbid,
