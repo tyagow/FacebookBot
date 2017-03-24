@@ -1,3 +1,4 @@
+import datetime
 from unittest import skip
 
 from django.contrib.auth.models import User
@@ -39,6 +40,13 @@ class PedidoModelManagerTest(TestCase):
         self.assertEqual(self.pedido, Pedido.objects.actives(self.user)[0])
 
         self.assertEqual(1, Pedido.objects.actives(self.user).count())
+
+    def test_realizados(self):
+        """PedidoManager deve ter um metodo que retorne somente os pedidos realizados"""
+        self.pedido.status = 2
+        self.pedido.save()
+        self.assertEqual(self.pedido, Pedido.objects.realizados()[0])
+
 
 
 class PedidoModelTest(TestCase):
@@ -121,3 +129,11 @@ class PedidoModelTest(TestCase):
     def test_horario_field(self):
         field = self.pedido._meta.get_field('horario')
         self.assertTrue(field.blank)
+
+    def test_horario_hora(self):
+        self.pedido.horario = datetime.datetime.strptime('10/3/2017 10:30', '%d/%m/%Y %H:%M')
+        self.assertEqual(self.pedido.horario_hora, '10:30')
+
+    def test_get_absolute_url(self):
+        url = resolve_url('pedido:detail', pk=self.pedido.pk)
+        self.assertEqual(url, self.pedido.get_absolute_url())

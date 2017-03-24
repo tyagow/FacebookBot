@@ -2,33 +2,45 @@
 {% block content %}
     <section class="single-section">
         <div class="container">
-            <table class="table card-basic">
+            <table class="table table-responsive table-hover card-basic">
                 <thead>
                 <tr>
-                    <th>#</th>
                     <th>Cliente</th>
-                    <th>Ultima atualização</th>
+                    <th>Horario</th>
+                    <th>Entrega</th>
                     <th>Produtos</th>
                     <th>status</th>
                     <th>total</th>
+                    <th></th>
 
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="">
                 {% for object in object_list %}
-                    <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
+                    <tr href="{{ object.get_absolute_url }}">
                         <td>{{ object.session.profile.first_name }}</td>
-                        <td>{{ object.last_updated }}</td>
+                        <td>{{ object.horario_hora }}</td>
+                        <td>{{ object.get_entrega_display }}</td>
+
                         <td>
                             {%  for produto in object.produtos.all %}
-                                <div class="row">
-                                    {{ produto.amount }} - {{ produto.nome }}
-                                </div>
+                                {{ produto.amount }} - {{ produto.nome }}
+                                {% if not forloop.last %}<br/>{% endif %}
                             {% endfor %}
                         </td>
-                        <td>{{ object.get_status_display }}</td>
+                        <td>
+                            <form method="GET" action="{% url 'pedido:update' object.id %}">
+                                <select>
+                                    <option name="choices" value="2">Aguardando Entrega</option>
+                                    <option name="choices" value="3">Enviado</option>
+                                </select>
+                            </form>
+                            {#                            {{ object.get_status_display }}#}
+                        </td>
                         <td>{{ object.valor_total }}</td>
+                        <td>
+                            <a href=""></a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -36,4 +48,14 @@
             </table>
         </div>
     </section>
+{% endblock %}
+{% block script %}
+    <script>
+{#        $(document).ready(function(){#}
+{#            $('table tr').click(function(){#}
+{#                window.location = $(this).attr('href');#}
+{#                return false;#}
+{#            });#}
+{#        });#}
+    </script>
 {% endblock %}

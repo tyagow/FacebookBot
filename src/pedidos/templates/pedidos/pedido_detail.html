@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="single-section">
+        <div class="container">
+            <table class="table table-responsive card-basic">
+                <tbody class="">
+                    <tr><td>Usuario: </td><td>{{ object.session.profile.first_name }}</td></tr>
+                    <tr class=""><td>Entrega: </td><td>{{ object.get_entrega_display }}</td></tr>
+                    <tr class=""><td>Endereço: </td><td>{{ object.endereco }}</td></tr>
+                    <tr class=""><td>Telefone: </td><td>{{ object.telefone }}</td></tr>
+                    <tr class=""><td>Horario: </td><td>{{ object.horario_hora }}</td></tr>
+
+                    <tr><td>Produtos: </td><td>
+                        {%  for produto in object.produtos.all %}
+                            {{ produto.amount }} - {{ produto.nome }}
+                            {% if not forloop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </td>
+                    </tr>
+                    <tr><td>Status: </td><td>{{ object.get_status_display }}</td></tr>
+                    <tr><td>Total: </td><td>{{ object.valor_total }}</td></tr>
+                </tbody>
+
+            </table>
+        </div>
+    </section>
+{% endblock %}

@@ -1,13 +1,13 @@
 import datetime
-import re
 
 from django.db import models
+from django.shortcuts import resolve_url
 from django.utils.translation import ugettext_lazy as _
 from django_fsm import FSMIntegerField
 
 from src.bot.states import ClientStateEnum
 from src.pedidos.managers import PedidoModelManager
-from src.pedidos.utils import check_back_menu_action, time_valid, isDateTimeFormat, isTimeFormat
+from src.pedidos.utils import check_back_menu_action, isDateTimeFormat, isTimeFormat
 from src.produtos.models import Produto
 
 STATUS_CHOICES = (
@@ -21,12 +21,27 @@ TIPO_ENTREGA_CHOICES = (
     (1, 'MotoBoy'),
     (2, 'Retirar no local'),
 )
+STATE_CHOICES = (
+    (1, 'Aberto'),
+    (20, 'Lista de Produtos'),
+    (50, 'Selecionando Produto'),
+    (55, 'Adicionando Mais Produtos'),
+    (60, 'Quantidade do produto'),
+    (70, 'Tipo de Entrega'),
+    (75, 'Horario'),
+    (80, 'Endereco para entrega'),
+    (100, 'Observação'),
+    (120, 'Confirmando pedido'),
+    (200, 'Pedido Feito'),
+)
 
 PEDIDO_ABERTO = 1
 PEDIDO_REALIZADO = 2
 PEDIDO_ENVIADO = 3
 PEDIDO_FINALIZADO = 4
 PEDIDO_ABANDONADO = 5
+
+
 
 class PedidoState(object):
     ABERTO = 1
@@ -51,7 +66,7 @@ class Pedido(models.Model):
     endereco = models.CharField(max_length=100)
     observacao = models.TextField(blank=True)
     status = models.IntegerField(_('Status'), choices=STATUS_CHOICES, default=1)
-    state = FSMIntegerField(default=PedidoState.ABERTO)
+    state = FSMIntegerField(default=PedidoState.ABERTO, choices=STATE_CHOICES)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     active = models.BooleanField(default=True)
@@ -61,11 +76,15 @@ class Pedido(models.Model):
     objects = PedidoModelManager()
 
     def __str__(self):
-        return '#{id} - {autor}  Total R$ {total}'.format(
+        return '#{id} - {autor} @ {hora}  Total R$ {total}'.format(
             id=self.id,
             autor=self.session.profile.first_name,
-            total=self.produtos.total(self)
+            total=self.produtos.total(self),
+            hora=self.horario_verbose
         )
+
+    def get_absolute_url(self):
+        return resolve_url('pedido:detail', pk=self.pk)
 
     def decode_message(self, message):
         # print('Pedido decode message %s' % message)
@@ -279,3 +298,12 @@ class Pedido(models.Model):
     @property
     def horario_verbose(self):
         return self.horario.strftime('%d/%m/%Y %H:%M')
+
+    @property
+    def horario_hora(self):
+        return self.horario.strftime('%H:%M')
+
+    @property
+    def telefone(self):
+        return self.session.profile.telefone
+
