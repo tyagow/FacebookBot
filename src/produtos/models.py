@@ -36,7 +36,7 @@ class ProductOrderManager(models.Manager):
 class ProductOrder(models.Model):
     amount = models.IntegerField('Quantidade',default=0)
     produto = models.ForeignKey('Produto', related_name='pedidos')
-    pedido = models.ForeignKey('pedidos.Pedido', related_name='produtos')
+    pedido = models.ForeignKey('pedidos.Pedido', related_name='produtos', blank=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 

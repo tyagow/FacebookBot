@@ -22,6 +22,10 @@ TIPO_ENTREGA_CHOICES = (
     (1, 'MotoBoy'),
     (2, 'Retirar no local'),
 )
+ORIGIN_CHOICES = (
+    (1, 'Facebook'),
+    (2, 'Loja'),
+)
 STATE_CHOICES = (
     (1, 'Aberto'),
     (20, 'Lista de Produtos'),
@@ -43,7 +47,6 @@ PEDIDO_FINALIZADO = 4
 PEDIDO_ABANDONADO = 5
 
 
-
 class PedidoState(object):
     ABERTO = 1
     LISTA_PRODUTOS = 20
@@ -60,11 +63,11 @@ class PedidoState(object):
 
 class Pedido(models.Model):
     """
-    Pedido must be created by a Session
+    Pedido can be created by a Session
 
     """
-    session = models.ForeignKey('bot.Session', related_name='pedidos')
-    endereco = models.CharField(max_length=100)
+    session = models.ForeignKey('bot.Session', related_name='pedidos', null=True, blank=True)
+    endereco = models.CharField(max_length=100, blank=True)
     observacao = models.TextField(blank=True)
     status = models.IntegerField(_('Status'), choices=STATUS_CHOICES, default=1)
     state = FSMIntegerField(default=PedidoState.ABERTO, choices=STATE_CHOICES)
@@ -73,13 +76,19 @@ class Pedido(models.Model):
     active = models.BooleanField(default=True)
     entrega = models.IntegerField(_('Tipo entrega'), choices=TIPO_ENTREGA_CHOICES, default=1)
     horario = models.DateTimeField(_('Horario'), blank=True, null=True)
-
+    origin = models.IntegerField(_('Origem Pedido'), choices=ORIGIN_CHOICES, default=1)
     objects = PedidoModelManager()
+    cliente = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
+        autor = '?'
+        if self.session:
+            # Pedido vindo do Facebook
+            autor = self.session.profile.first_name
+
         return '#{id} - {autor} @ {hora}  Total R$ {total}'.format(
             id=self.id,
-            autor=self.session.profile.first_name,
+            autor=autor,
             total=self.produtos.total(self),
             hora=self.horario_verbose
         )

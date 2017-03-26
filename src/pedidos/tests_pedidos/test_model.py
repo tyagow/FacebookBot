@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import resolve_url
 from django.test import TestCase
 
-from src.pedidos.models import Pedido
+from src.pedidos.models import Pedido, PedidoState
 from src.pedidos.utils import time_valid, isDateTimeFormat, isTimeFormat
 from src.produtos.models import Produto
 
@@ -48,8 +48,7 @@ class PedidoModelManagerTest(TestCase):
         self.assertEqual(self.pedido, Pedido.objects.realizados()[0])
 
     def test_hoje(self):
-        """Pedidos.objects.hoje deve retornar pedidos que sejam para hoje"""
-        hoje = datetime.datetime.strptime('23/3/2017 00:01', '%d/%m/%Y %H:%M')
+        """Pedidos.objects.hoje deve retornar pedidos que sejam para hoje Se estiver em Desenvolvimento e este teste falhar,checar se em Pedidos.managers se nao esta utilizando um workaround para poder ver mais pedidos no dia. Arrumar antes de enviar para o SERVIDOR"""
         self.pedido.horario = datetime.datetime.today()
         self.pedidoB.set_horario('22/3/2017 10:30')
         self.pedido.save()
@@ -82,17 +81,17 @@ class PedidoModelTest(TestCase):
     def test_create(self):
         self.assertTrue(Pedido.objects.exists())
 
-    def test_has_endereco_on_create(self):
+    def test_endereco_can_be_blank(self):
         field = Pedido._meta.get_field('endereco')
-        self.assertFalse(field.blank)
+        self.assertTrue(field.blank)
+
+    def test_cliente_can_be_blank(self):
+        field = Pedido._meta.get_field('cliente')
+        self.assertTrue(field.blank)
 
     def test_observacao_can_be_blank(self):
         field = Pedido._meta.get_field('observacao')
         self.assertTrue(field.blank)
-
-    @skip
-    def test_slug_auto_create(self):
-        self.assertEqual(self.pedido.slug, 'tiago')
 
     def test_status_choices_display(self):
         """
@@ -146,3 +145,14 @@ class PedidoModelTest(TestCase):
     def test_get_absolute_url(self):
         url = resolve_url('pedido:detail', pk=self.pedido.pk)
         self.assertEqual(url, self.pedido.get_absolute_url())
+
+    def test_pedido_has_origin(self):
+        self.assertEqual(self.pedido.get_origin_display(), 'Facebook')
+
+    def test_pedido_can_be_create_without_session(self):
+        pedido = Pedido.objects.create(
+            origin=2,
+            state=PedidoState.FINALIZADO,
+        )
+        self.assertEqual(Pedido.objects.filter(origin=2).first(), pedido)
+

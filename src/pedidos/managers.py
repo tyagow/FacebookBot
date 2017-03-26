@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.db import models
 
 
@@ -14,7 +15,10 @@ class PedidoModelQuerySet(models.QuerySet):
         return self.filter(status__gte=2)
 
     def hoje(self):
-        return self.all()  # filter(horario__date=datetime.datetime.today())
+        #
+        # if DEBUG:
+        return self.all()
+        # return self.filter(horario__date=datetime.datetime.today())
 
 
 PedidoModelManager = models.Manager.from_queryset(PedidoModelQuerySet)

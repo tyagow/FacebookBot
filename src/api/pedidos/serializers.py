@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
@@ -22,18 +23,23 @@ class ProdutoPedidoSerializer(ModelSerializer):
             'valor',
             'valor_total'
         ]
-#
-# class PedidoCreateSerializer(ModelSerializer):
-#     class Meta:
-#         model = Pedido
-#         fields = [
-#             'status',
-#         ]
-#
+
+
+class PedidoCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Pedido
+        fields = [
+            'origin',
+            'state',
+        ]
+
+    def create(self, validated_data):
+        return Pedido.objects.create(**validated_data)
 
 
 class PedidoDetailSerializer(ModelSerializer):
     produtos = SerializerMethodField()
+
     class Meta:
         model = Pedido
         fields = [
@@ -48,12 +54,14 @@ class PedidoDetailSerializer(ModelSerializer):
             'get_status_display',
             'valor_total',
         ]
+        extra_kwargs = {'produtos': {'required': False}}
 
     def get_produtos(self, obj):
-        return ProdutoPedidoSerializer(obj.produtos.all(), many=True).data
+        return ProdutoPedidoSerializer(obj.produtos.all(), many=True, read_only=True).data
 
 
 class PedidoListSerializer(ModelSerializer):
+    produtos = ProdutoPedidoSerializer(many=True, read_only=True)
     class Meta:
         model = Pedido
         fields = [
@@ -68,3 +76,5 @@ class PedidoListSerializer(ModelSerializer):
             'get_status_display',
             'valor_total',
         ]
+        extra_kwargs = {'produtos': {'required': False}}
+
