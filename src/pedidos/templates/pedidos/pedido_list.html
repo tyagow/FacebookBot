@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div id="message" class="alert alert-dismissible text-center alert-fixed" style=""></div>
     <section class="single-section">
         <div class="container">
             <table class="table  table-hover card-basic">
@@ -31,14 +32,10 @@
                             {% endfor %}
                         </td>
                         <td>
-                            <form id='update' method="put" action="{% url 'pedidos-api:update' object.id %}">
-                                {% csrf_token %}
-                                <select onchange="this.form.submit()" class="selectpicker">
-                                    <option name="status" value="2">Aguardando Entrega</option>
-                                    <option name="status" value="3">Enviado</option>
-                                </select>
-                            </form>
-                            {#                            {{ object.get_status_display }}#}
+                            <select id='pedido-{{ object.id }}-status' onchange="update({{ object.id }})" class="selectpicker">
+                                <option name="status" value="2">Aguardando Entrega</option>
+                                <option name="status" value="3">Enviado</option>
+                            </select>
                         </td>
                         <td>{{ object.valor_total }}</td>
                         <td>
@@ -54,11 +51,53 @@
 {% endblock %}
 {% block script %}
     <script>
-{#        $(document).ready(function(){#}
-{#            $('table tr').click(function(){#}
-{#                window.location = $(this).attr('href');#}
-{#                return false;#}
-{#            });#}
-{#        });#}
+        $( document ).ready(function() {
+           $("#message").hide();
+        });
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+        function update(id) {
+            $.ajax({
+                url: '/api/pedidos/' + id + "/edit/", // the endpoint
+                type: "PUT", // http method
+                data: { status: $('#pedido-'+id+'-status').val() }, // data sent with the post request
+
+                // handle a successful response
+                error: function (xhr, errmsg, err) {
+                    {#                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console#}
+                    $('#message').text('Ocorreu um erro ao alterar o produto.').addClass('alert-danger').show();
+                    setTimeout(function() { $("#message").hide(); }, 4000);
+                },
+
+                // handle a non-successful response
+                success: function (json) {
+                    $('#message').text('Produto alterado com sucesso.').addClass('alert-success').show();
+                    setTimeout(function() { $("#message").hide(); }, 4000);
+
+                }
+            });
+        }
+
     </script>
 {% endblock %}

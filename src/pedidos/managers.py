@@ -14,7 +14,7 @@ class PedidoModelQuerySet(models.QuerySet):
         return self.filter(status__gte=2)
 
     def hoje(self):
-        return self.filter(horario__date=datetime.datetime.today())
+        return self.all()  # filter(horario__date=datetime.datetime.today())
 
 
 PedidoModelManager = models.Manager.from_queryset(PedidoModelQuerySet)

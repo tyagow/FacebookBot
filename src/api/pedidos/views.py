@@ -4,7 +4,7 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
     RetrieveUpdateAPIView,
-)
+    UpdateAPIView)
 
 from src.pedidos.models import Pedido
 from .serializers import (
@@ -40,10 +40,8 @@ class PedidoListAPIView(ListAPIView):
     serializer_class = PedidoListSerializer
 
 
-class PedidoUpdateAPIView(RetrieveUpdateAPIView):
+class PedidoUpdateAPIView(UpdateAPIView):
     queryset = Pedido.objects.all()
     serializer_class = PedidoUpdateSerializer
     lookup_field = 'pk'
 
-    # def perform_update(self, serializer):
-    #     serializer.save(user=self.request.user)

@@ -1,6 +1,8 @@
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from src.pedidos.models import Pedido
+from src.produtos.models import ProductOrder
 
 
 class PedidoUpdateSerializer(ModelSerializer):
@@ -10,6 +12,16 @@ class PedidoUpdateSerializer(ModelSerializer):
             'status',
         ]
 
+
+class ProdutoPedidoSerializer(ModelSerializer):
+    class Meta:
+        model = ProductOrder
+        fields =[
+            'amount',
+            'nome',
+            'valor',
+            'valor_total'
+        ]
 #
 # class PedidoCreateSerializer(ModelSerializer):
 #     class Meta:
@@ -21,6 +33,7 @@ class PedidoUpdateSerializer(ModelSerializer):
 
 
 class PedidoDetailSerializer(ModelSerializer):
+    produtos = SerializerMethodField()
     class Meta:
         model = Pedido
         fields = [
@@ -32,8 +45,12 @@ class PedidoDetailSerializer(ModelSerializer):
             'produtos',
             'status',
             'get_status_display',
+            'get_status_display',
             'valor_total',
         ]
+
+    def get_produtos(self, obj):
+        return ProdutoPedidoSerializer(obj.produtos.all(), many=True).data
 
 
 class PedidoListSerializer(ModelSerializer):
