@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
+{% load bootstrap3 %}
+
 {% block content %}
     <div id="message" class="alert alert-dismissible text-center alert-fixed" style=""></div>
     <section class="single-section">
         <div class="container">
             <table class="table  table-hover card-basic">
                 <thead>
+                <button id="openModal" type="button" class="btn btn-primary btn-create-pedido pull-right">Adicionar Pedido</button>
                 <tr>
                     <th>Cliente</th>
                     <th>Horario</th>
@@ -48,11 +51,15 @@
             </table>
         </div>
     </section>
+    {% include 'pedidos/pedido_create_modal.html' %}
 {% endblock %}
 {% block script %}
     <script>
         $( document ).ready(function() {
            $("#message").hide();
+        });
+        $('#openModal').click(function () {
+            $('#pedidoModal').modal('show');
         });
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {

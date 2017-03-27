@@ -105,6 +105,10 @@ body {
     min-height: 55%;
 }
 /* Button*/
+.btn-create-pedido {
+    /*position: absolute;*/
+    margin-bottom: 20px;
+}
 .btn-grande  {
     color: #fff !important;
     font-weight: 900;

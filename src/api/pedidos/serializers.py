@@ -60,8 +60,9 @@ class PedidoDetailSerializer(ModelSerializer):
         return ProdutoPedidoSerializer(obj.produtos.all(), many=True, read_only=True).data
 
 
-class PedidoListSerializer(ModelSerializer):
-    produtos = ProdutoPedidoSerializer(many=True, read_only=True)
+class PedidoCreateListSerializer(ModelSerializer):
+    produtos = ProdutoPedidoSerializer(many=True)
+    
     class Meta:
         model = Pedido
         fields = [
