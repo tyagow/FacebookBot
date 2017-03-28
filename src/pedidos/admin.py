@@ -18,6 +18,6 @@ class ProdutosTabularInlineAdmin(admin.TabularInline):
 
 class PedidoAdmin(admin.ModelAdmin):
     inlines = [ProdutosTabularInlineAdmin]
-
+    # exclude = ['horario']
 
 admin.site.register(Pedido, PedidoAdmin)

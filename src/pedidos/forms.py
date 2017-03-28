@@ -5,10 +5,10 @@ from src.produtos.models import Produto
 
 
 class PedidoForm(forms.ModelForm):
-    produtos = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Produto.objects.ativos())
-    observacao = forms.CharField(widget=forms.Textarea(attrs={'cols': 15, 'rows': 4}))
+    # produtos = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Produto.objects.ativos())
+    observacao = forms.CharField(widget=forms.Textarea(attrs={'cols': 15, 'rows': 4}), required=False)
 
     class Meta:
         model = Pedido
-        fields = ['cliente', 'produtos', 'endereco', 'horario', 'entrega', 'status', 'observacao']
+        fields = ['cliente', 'endereco', 'horario', 'entrega', 'status', 'observacao']
         exclude = ['session', 'state', 'active', 'origin']

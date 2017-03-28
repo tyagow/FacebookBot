@@ -1,17 +1,14 @@
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
-    ListAPIView,
     RetrieveAPIView,
-    RetrieveUpdateAPIView,
     UpdateAPIView, ListCreateAPIView)
 
 from src.pedidos.models import Pedido
 from .serializers import (
     PedidoDetailSerializer,
-    PedidoCreateListSerializer,
-    # PedidoCreateUpdateSerializer
-    PedidoUpdateSerializer, PedidoCreateSerializer)
+    PedidoUpdateSerializer,
+    PedidoCreateSerializer, PedidoListSerializer)
 
 
 class PedidoCreateAPIView(CreateAPIView):
@@ -19,6 +16,7 @@ class PedidoCreateAPIView(CreateAPIView):
     serializer_class = PedidoCreateSerializer
 
     def perform_create(self, serializer):
+        print(serializer)
         serializer.save()
 
 
@@ -36,8 +34,8 @@ class PedidoDeleteAPIView(DestroyAPIView):
 
 
 class PedidoListAPIView(ListCreateAPIView):
-    queryset = Pedido.objects.hoje().realizados()
-    serializer_class = PedidoCreateListSerializer
+    queryset = Pedido.objects.all()  # hoje().realizados()
+    serializer_class = PedidoListSerializer
 
 
 class PedidoUpdateAPIView(UpdateAPIView):

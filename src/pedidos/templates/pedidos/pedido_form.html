@@ -1,1 +1,36 @@
-{% include 'widgets/form.html' with button_text='Enviar' title='Alterar Pedido' %}
+{% extends 'base.html' %}
+{% comment %}
+    Variaveis:
+        title = titulo do form
+        button_text = Texto do botar para submeter form
+    Blocks
+        footer_form = Bloco para implementar algum footer na card
+
+    Usage:
+
+{% endcomment %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block content %}
+    <section class="section-single">
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                <div class="card-basic card-form">
+                    <div class="card-block">
+                        <h2 class="card-title">Fazer Pedido</h2>
+                        <hr class="hr-titulo">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% bootstrap_formset formset layout="horizontal" %}
+                            {% bootstrap_form form layout="vertical" %}
+                            <div class="footer-form">
+                                <button type="submit" class=" btn btn-grande">Fazer Pedido</button>
+                            </div>
+                        </form>
+                        {% block footer_form %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

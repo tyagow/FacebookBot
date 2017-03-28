@@ -312,6 +312,7 @@ class Pedido(models.Model):
 
     @property
     def horario_verbose(self):
+        # return '--'
         if self.horario:
             return self.horario.astimezone().strftime('%d/%m/%Y %H:%M')
         else:
@@ -319,11 +320,16 @@ class Pedido(models.Model):
 
     @property
     def horario_hora(self):
-        return self.horario.astimezone().strftime('%H:%M')
+        if self.horario:
+            return self.horario.astimezone().strftime('%H:%M')
+        return '----'
 
     @property
     def telefone(self):
-        return self.session.profile.telefone
+        if self.session:
+            return self.session.profile.telefone
+
+        return '----'
 
     def set_horario(self, data):
         d = datetime.datetime.now()
@@ -334,4 +340,6 @@ class Pedido(models.Model):
 
     @property
     def client_name(self):
-        return self.session.profile.first_name
+        if self.session:
+            return self.session.profile.first_name
+        return self.cliente if self.cliente else '?'
