@@ -23,7 +23,13 @@ class PedidoListView(ListView):
         # serializer = PedidoCreateListSerializer()
         # context['serializer'] = serializer
         form = PedidoForm()
+
+        ProductOrderInlineFormSet = inlineformset_factory(Pedido, ProductOrder, form=ProductOrderForm,
+                                                          fields=('amount', 'produto'), extra=1)
+        formset = ProductOrderInlineFormSet()
         context['form'] = form
+        context['formset'] = formset
+
         return context
 
 

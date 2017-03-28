@@ -9,7 +9,9 @@
         </div>
         <div class="modal-body">
             {% csrf_token %}
+            {% bootstrap_formset formset %}
             {% bootstrap_form form %}
+
         </div>
         <div class="modal-footer">
             <input class="btn btn-primary" type="submit" value="Save" />
