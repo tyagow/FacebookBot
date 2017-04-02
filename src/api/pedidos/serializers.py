@@ -36,7 +36,7 @@ class ProdutoCreateSerializer(ModelSerializer):
 
 
 class ProductOrderCreateSerializer(ModelSerializer):
-    produto = ProdutoCreateSerializer(Produto.objects.ativos(), many=True).data
+    # produto = ProdutoCreateSerializer(Produto.objects.ativos(), many=True).data
     
     class Meta:
         model = ProductOrder
