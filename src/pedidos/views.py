@@ -6,10 +6,11 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
+from src.api.pedidos.serializers import PedidoCreateSerializer
 from src.pedidos.forms import PedidoForm
 from src.pedidos.models import Pedido
 from src.produtos.forms import ProductOrderForm
-from src.produtos.models import ProductOrder
+from src.produtos.models import ProductOrder, Produto
 
 
 class PedidoListView(ListView):
@@ -22,13 +23,14 @@ class PedidoListView(ListView):
         context = super(PedidoListView, self).get_context_data(**kwargs)
         # serializer = PedidoCreateListSerializer()
         # context['serializer'] = serializer
-        form = PedidoForm()
+        form = PedidoCreateSerializer()
 
         ProductOrderInlineFormSet = inlineformset_factory(Pedido, ProductOrder, form=ProductOrderForm,
                                                           fields=('amount', 'produto'), extra=1)
-        formset = ProductOrderInlineFormSet()
         context['form'] = form
-        context['formset'] = formset
+        context['produtos_form'] = ProductOrderInlineFormSet()
+        context['produtos'] = Produto.objects.ativos()
+        # context['formset'] = formset
 
         return context
 
@@ -51,8 +53,6 @@ def pedido_create(request):
 
     if request.method == "POST":
         form = PedidoForm(request.POST)
-
-        formset = ProductOrderInlineFormSet(request.POST or None)
 
         if form.is_valid():
             instance = form.save(commit=False)

@@ -4,8 +4,8 @@ from src.produtos.models import Produto, ProductOrder
 
 
 class ProductOrderForm(forms.ModelForm):
-    # produtos = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple(), queryset=Produto.objects.ativos())
-
+    produto = forms.ModelChoiceField(queryset=Produto.objects.ativos())
+    # amount = forms.
     class Meta:
         model = ProductOrder
-        fields = '__all__'
+        exclude = ['id', 'pedido']

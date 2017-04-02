@@ -19,7 +19,7 @@
                     <div class="card-block">
                         <h2 class="card-title">Fazer Pedido</h2>
                         <hr class="hr-titulo">
-                        <form method="post">
+                        <form method="post" action="{% url "pedidos-api:create" %}">
                             {% csrf_token %}
                             {% bootstrap_formset formset layout="horizontal" %}
                             {% bootstrap_form form layout="vertical" %}

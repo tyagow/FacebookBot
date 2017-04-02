@@ -3,14 +3,34 @@
 
 <div class="modal" id="pedidoModal">
     <form class="well" method="post" action="{% url 'pedidos-api:create' %}">
+        {% for produto in produtos %}
+            <a href="#" id="add-produto-{{ produto.id }}" class="btn btn-info pull-right add-produto">{{ produto.nome }}</a>
+
+        {% endfor %}
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Fazer Pedido</h3>
         </div>
         <div class="modal-body">
             {% csrf_token %}
-            {% bootstrap_formset formset %}
-            {% bootstrap_form form %}
+            <div id="produtos-form-container">
+
+            </div>
+            {{ produtos_form.management_form }}
+            {#            {% bootstrap_formset formset %}#}
+            {#            {% for form_ in formset %}#}
+            {#                {% for field in form_.visible_fields %}#}
+            {#                    <div class="form-group">#}
+            {#                        {{ field.errors }}#}
+            {#                        {{ field.label_tag }} {{ field }}#}
+            {#                        {% if field.help_text %}#}
+            {#                            <p class="help">{{ field.help_text|safe }}</p>#}
+            {#                        {% endif %}#}
+            {#                    </div>#}
+            {#                {% endfor %}#}
+            {#            {% endfor %}#}
+            {% render_form form %}
 
         </div>
         <div class="modal-footer">
@@ -20,3 +40,43 @@
     </form>
 
 </div>
+{% for produto in produtos %}
+    <script type="text/html" id="produto-{{ produto.id }}-template">
+
+        <div id="produtos" >
+            <div class="form-group">
+                <label for="id_produtos-{{ forloop.counter0 }}-amount">Quantidade:</label>
+                <input class="form-control" id="id_produtos-{{ forloop.counter0 }}-amount" name="produtos-{{ forloop.counter0 }}-amount" value="1" type="number">
+            </div>
+            <div class="form-group">
+                <label for="id_produtos-{{ forloop.counter0 }}-produto">Produto:</label>
+                <select class="form-control" id="id_produtos-{{ forloop.counter0 }}-produto" name="produtos-{{ forloop.counter0 }}-produto" title="">
+                    <option value="{{ produto.id }}" selected="selected">{{ produto.nome }}</option>
+                </select>
+            </div>
+            {#    <!-- crispy: {% crispy produto_forms.empty_form produto_forms.form.helper %} -->#}
+        </div>
+    </script>
+    <script>
+{% endfor %}
+$(document).ready(function() {
+    {% for produto in produtos %}
+        $('#add-produto-{{ produto.id }}').click(function(ev) {
+            ev.preventDefault();
+            var count = $('#produtos-form-container').children().length;
+            console.log(count)
+            var tmplMarkup = $('#produto-{{ produto.id }}-template').html();
+            $('div#produtos-form-container').append(tmplMarkup);
+
+            // update form count
+            $('#id_produtos-TOTAL_FORMS').attr('value', count+1);
+
+            // some animate to scroll to view our new form
+            $('html, body').animate({
+                scrollTop: $("#add-produto-{{ produto.id }}").position().top-200
+            }, 800);
+        });
+    {% endfor %}
+
+});
+</script>

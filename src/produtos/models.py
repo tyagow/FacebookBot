@@ -10,7 +10,7 @@ class ProdutoManager(models.Manager):
 class Produto(models.Model):
     nome = models.CharField(_('Produto'), max_length=120)
     valor = models.FloatField(_('Valor'), max_length=10)
-    active = models.BooleanField('Ativa', default=True)
+    active = models.BooleanField('Ativo', default=True)
 
     objects = ProdutoManager()
 
@@ -34,7 +34,7 @@ class ProductOrderManager(models.Manager):
 
 
 class ProductOrder(models.Model):
-    amount = models.IntegerField('Quantidade',default=0)
+    amount = models.IntegerField('Quantidade', default=1)
     produto = models.ForeignKey('Produto', related_name='pedidos')
     pedido = models.ForeignKey('pedidos.Pedido', related_name='produtos', blank=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)

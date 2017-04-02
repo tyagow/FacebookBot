@@ -5,7 +5,7 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from src.pedidos.models import Pedido
-from src.produtos.models import ProductOrder
+from src.produtos.models import ProductOrder, Produto
 
 
 class PedidoUpdateSerializer(ModelSerializer):
@@ -16,7 +16,7 @@ class PedidoUpdateSerializer(ModelSerializer):
         ]
 
 
-class ProductOrderSerializer(ModelSerializer):
+class ProductOrderDetailSerializer(ModelSerializer):
     class Meta:
         model = ProductOrder
         fields = [
@@ -27,44 +27,73 @@ class ProductOrderSerializer(ModelSerializer):
         ]
 
 
+class ProdutoCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = [
+            'nome',
+        ]
+
+
+class ProductOrderCreateSerializer(ModelSerializer):
+    produto = ProdutoCreateSerializer(Produto.objects.ativos(), many=True).data
+    
+    class Meta:
+        model = ProductOrder
+        fields = [
+            'amount',
+            'produto',
+        ]
+    
+    def create(self, validated_data):
+        print(validated_data)
+
+
 class PedidoCreateSerializer(ModelSerializer):
     horario = serializers.DateTimeField(input_formats=['%d/%m/%Y %H:%M', '%H:%M'], default=(timezone.now() - datetime.timedelta(hours=3)))
-    produso = ProductOrderSerializer()
+    # produtos = ProductOrderCreateSerializer(many=True).data
+
     class Meta:
         model = Pedido
         fields = [
-            'origin',
-            'status',
-            'cliente',
-            'endereco',
             'produtos',
-            'horario',
+            'cliente',
             'entrega',
-            'observacao'
+            'endereco',
+            'origin',
+            'horario',
+            'observacao',
+            'status'
+
         ]
 
     def create(self, validated_data):
+        print('DATA %s' % validated_data)
+        # print(dir(self))
         produtos_data = validated_data.pop('produtos')
         horario = validated_data.pop('horario')
+        # print(produtos_data)
         from django.utils import timezone
         today = timezone.now() - datetime.timedelta(hours=3)
         # print(today)
         # print(horario)
         # print(dir(horario))
+        horario = horario - datetime.timedelta(minutes=6)
+        hora = horario.hour
+
         if horario < today:
-            horario = horario.replace(day=today.day, year=today.year, month=today.month, minute=horario.minute-6)
-
+            horario = horario.replace(day=today.day, year=today.year, month=today.month)
+        # validated_data.pop('amount')
+        # validated_data.pop('produto')
         # print(horario)
-
+        # print(validated_data)
         pedido = Pedido.objects.create(**validated_data)
         pedido.horario = horario
         pedido.save()
-        for produto in produtos_data:
-            print(produto)
+        # print(validated_data.data.get('produtos-TOTAL_FORMS'))
+        # for produto in produtos_data:
+        #     print(produto.nome)
         return pedido
-
-    def get_produtos(self, obj):
-        return ProductOrderSerializer(obj.produtos.all(), many=True, read_only=True).data
 
 
 class PedidoDetailSerializer(ModelSerializer):
@@ -87,11 +116,11 @@ class PedidoDetailSerializer(ModelSerializer):
         extra_kwargs = {'produtos': {'required': False}}
 
     def get_produtos(self, obj):
-        return ProductOrderSerializer(obj.produtos.all(), many=True, read_only=True).data
+        return ProductOrderDetailSerializer(obj.produtos.all(), many=True, read_only=True).data
 
 
 class PedidoListSerializer(ModelSerializer):
-    produtos = ProductOrderSerializer(many=True)
+    produtos = ProductOrderDetailSerializer(many=True)
     
     class Meta:
         model = Pedido

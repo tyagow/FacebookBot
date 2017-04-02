@@ -11,4 +11,4 @@ class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
         fields = ['cliente', 'endereco', 'horario', 'entrega', 'status', 'observacao']
-        exclude = ['session', 'state', 'active', 'origin']
+        exclude = ['session', 'state', 'active', 'origin', 'produtos']
